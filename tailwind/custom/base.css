@@ -7,5 +7,89 @@
  * file and is applied both to the front end and in the block editor.
  */
 body {
-	@apply bg-background text-foreground font-sans;
+	@apply text-foreground bg-[#f2f2f4] font-sans;
+}
+
+/* Removes the 'Home/Shop' breadcrumb from the shop page for a cleaner look. */
+.woocommerce .woocommerce-breadcrumb {
+	@apply hidden;
+}
+
+/* 
+ * Styles the main content area to center its children (including product grid)
+ * horizontally. 'flex flex-col' makes it a column flex container.
+ * 'min-h-screen' ensures the main content area spans at least the viewport height.
+ * 'justify-center' and 'items-center' will center the content both vertically and horizontally within this area.
+*/
+main.site-main {
+    @apply flex flex-col justify-center items-center min-h-screen;
+}
+
+/* 
+ * Styles the main product listing container (the <ul> element).
+ * On small screens (below 768px), products will stack in a single column.
+ * On medium screens (768px and up), products will appear side-by-side in a single row.
+ * 'max-w-fit' ensures the grid only takes up the necessary width, allowing it to be horizontally centered by its parent.
+ * Adds a consistent gap between product items for better visual separation.
+*/
+.woocommerce ul.products {
+	@apply my-5 flex flex-col md:flex-row md:flex-nowrap gap-6 max-w-fit md:justify-center; /* Changed from grid to flex row */
+}
+
+/* 
+ * Styles the metadata section (product title and price) within each product item.
+ * Uses flexbox to align title and price on the same line, justifying them to opposite ends.
+ * Applies the 'Teko' font with responsive sizing and uppercasing.
+ * Adds padding specifically around this metadata section.
+*/
+.woocommerce .product-meta {
+	@apply flex items-center justify-between p-3 font-['Teko'] text-[1.2rem] uppercase md:text-[2rem];
+}
+
+/* 
+ * Resets the bottom margin of the product price within the product meta.
+ * Ensures consistent vertical alignment.
+*/
+.woocommerce ul.products li.product .price {
+	@apply mb-0;
+}
+
+/* 
+ * Styles each individual product item (the <li> element).
+ * Sets a white background.
+ * Applies responsive padding that increases with screen size:
+ *   - p-4: default padding for smaller screens (Tailwind's 'p-4' is 1rem).
+ *   - md:p-6: larger padding for medium screens (Tailwind's 'p-6' is 1.5rem).
+ *   - lg:p-8: even larger padding for large screens (Tailwind's 'p-8' is 2rem).
+ * Explicitly resets grid placement properties to ensure proper flow and prevent items from spanning rows/columns incorrectly.
+*/
+.woocommerce ul.products li.product,
+.woocommerce-page ul.products li.product {
+	@apply bg-white p-4 md:p-6 lg:p-8; /* Responsive padding */
+    grid-column: auto !important;    /* Ensures item uses auto column placement */
+    grid-row: auto !important;       /* Ensures item uses auto row placement */
+    align-self: auto !important;     /* Resets self-alignment within grid cell */
+    justify-self: auto !important;   /* Resets self-justification within grid cell */
+    width: auto !important;          /* Ensures width is not fixed externally */
+    height: auto !important;         /* Ensures height is not fixed externally */
+}
+
+/* 
+ * Styles the price specifically when inside a product loop and not using a block theme.
+ * Sets the text color to red. This is highly specific due to the ':where' selector.
+*/
+.woocommerce:where(body:not(.woocommerce-uses-block-theme))
+	ul.products
+	li.product
+	.price {
+	@apply text-red-500;
+}
+
+/* 
+ * Styles the product image within its container.
+ * Ensures the image fills the available width, maintains its aspect ratio,
+ * and is fully contained within its space (not cropped).
+*/
+.woocommerce ul.products li.product img {
+    @apply w-full h-auto object-contain; /* Ensure image scales correctly */
 }

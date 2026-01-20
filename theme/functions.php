@@ -149,6 +149,8 @@ add_action('widgets_init', 'ghost_widgets_init');
 function ghost_scripts()
 {
   wp_enqueue_style('ghost-style', get_stylesheet_uri(), array(), GHOST_VERSION);
+  // Enqueue the Google Font 'Teko'.
+  wp_enqueue_style( 'ghost-teko-font', '//fonts.googleapis.com/css2?family=Teko:wght@300;400;500;600;700&display=swap', array(), null, 'all' );
   wp_enqueue_script('ghost-script', get_template_directory_uri() . '/js/script.min.js', array(), GHOST_VERSION, true);
 
   if (is_singular() && comments_open() && get_option('thread_comments')) {
@@ -228,13 +230,66 @@ require get_template_directory() . '/inc/template-tags.php';
 require get_template_directory() . '/inc/template-functions.php';
 
 /**
- * Enable WooCommerce Support
+ * Enable WooCommerce Support for the Ghost Theme
  */
-function ghost_store_add_woocommerce_support()
+function ghost_add_woocommerce_support()
 {
+  // 1. Declare that this theme is officially compatible with WooCommerce.
+  // This stops WooCommerce from using its 'fallback' layout wrappers.
   add_theme_support('woocommerce');
+
+  // 2. Enable the Zoom effect on the single product main image.
+  // Uses the 'Photoswipe' library included with WooCommerce core.
   add_theme_support('wc-product-gallery-zoom');
+
+  // 3. Enable the Lightbox (popup) for product gallery images.
+  // Essential for mobile users who want to pinch-to-zoom on product details.
   add_theme_support('wc-product-gallery-lightbox');
+
+  // 4. Enable the Slider/Carousel for products with multiple gallery images.
+  // Automatically handles touch-swiping on tablets and mobile devices.
   add_theme_support('wc-product-gallery-slider');
+
+  // 5. Define thumbnail cropping and dimensions.
+  // This ensures your Tailwind grid doesn't look messy with uneven image heights.
+  add_theme_support('woocommerce', array(
+    'thumbnail_image_width' => 450, // Sets the width for the shop 'grid' images.
+    'single_image_width'    => 800, // Sets the width for the main product page image.
+    'product_grid'          => array(
+      'default_rows'    => 3,    // Sets default grid display.
+      'min_rows'        => 1,
+      'max_rows'        => 6,
+      'default_columns' => 3,    // Works well with Tailwind's 'grid-cols-3'.
+      'min_columns'     => 1,
+      'max_columns'     => 5,
+    ),
+  ));
 }
-add_action('after_setup_theme', 'ghost_store_add_woocommerce_support');
+// 6. Connect our function to the 'after_setup_theme' hook.
+// This is the standard WP "launch" hook for theme-wide configurations.
+add_action('after_setup_theme', 'ghost_add_woocommerce_support');
+
+
+/**
+ * Remove 'Add to Cart' button from product loops.
+ *
+ * This function specifically targets the 'woocommerce_after_shop_loop_item' action hook
+ * to remove the 'Add to Cart' button that WooCommerce automatically adds to products
+ * displayed in loops (e.g., on the main shop page, category archives, search results).
+ * It uses 'remove_action' to detach the 'woocommerce_template_loop_add_to_cart' function.
+ *
+ * IMPORTANT: This only affects product loops. The 'Add to Cart' button on
+ * individual product pages (single product view) remains unaffected, as it is
+ * hooked into different WooCommerce actions.
+ */
+function ghost_remove_add_to_cart_button()
+{
+  // This line precisely targets and removes the 'woocommerce_template_loop_add_to_cart' function
+  // from the 'woocommerce_after_shop_loop_item' action hook.
+  // The '10' is the priority at which the function was originally added.
+  remove_action('woocommerce_after_shop_loop_item', 'woocommerce_template_loop_add_to_cart', 10);
+}
+
+// This hooks our custom function into the 'init' action, which runs early in the WordPress load process.
+// Using 'init' ensures this removal happens before WooCommerce starts displaying products.
+add_action('init', 'ghost_remove_add_to_cart_button');
