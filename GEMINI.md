@@ -28,3 +28,28 @@
 1. **Conceptual Overview:** Explain how the feature fits into the WordPress hierarchy.
 2. **Code Snippet:** Fully commented line-by-line.
 3. **The Senior Dev's Why:** Explain the benefit regarding performance or security.
+4. **CSS Commenting & Organization Rules (Mandatory):**
+   - All CSS (including Tailwind `@apply`) must be **grouped by template origin**.
+   - Each group must begin with a **block comment naming the template file** the styles apply to.
+   - If a CSS rule targets multiple templates, it must be duplicated and commented separately per template group.
+   - Within each group:
+     - Styles must be **logically grouped by component or feature**
+     - Each selector must include a **clear comment explaining why the style exists**, not just what it does
+   - This applies to all WooCommerce-related templates (e.g. `archive-product.php`, `content-product.php`, `single-product.php`, `cart.php`, etc.).
+
+**Example:**
+```css
+/**
+ * Template: archive-product.php
+ * Purpose: Shop page and product archive layout adjustments
+ */
+
+/* Removes the breadcrumb for a cleaner, marketing-focused shop layout */
+.woocommerce .woocommerce-breadcrumb {
+  @apply hidden;
+}
+
+/* Improves visual hierarchy of product cards */
+.woocommerce ul.products li.product {
+  @apply rounded-lg shadow-sm;
+}

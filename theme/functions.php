@@ -150,7 +150,7 @@ function ghost_scripts()
 {
   wp_enqueue_style('ghost-style', get_stylesheet_uri(), array(), GHOST_VERSION);
   // Enqueue the Google Font 'Teko'.
-  wp_enqueue_style( 'ghost-teko-font', '//fonts.googleapis.com/css2?family=Teko:wght@300;400;500;600;700&display=swap', array(), null, 'all' );
+  wp_enqueue_style('ghost-teko-font', '//fonts.googleapis.com/css2?family=Teko:wght@300;400;500;600;700&display=swap', array(), null, 'all');
   wp_enqueue_script('ghost-script', get_template_directory_uri() . '/js/script.min.js', array(), GHOST_VERSION, true);
 
   if (is_singular() && comments_open() && get_option('thread_comments')) {
@@ -230,6 +230,11 @@ require get_template_directory() . '/inc/template-tags.php';
 require get_template_directory() . '/inc/template-functions.php';
 
 /**
+ * Custom WooCommerce functions for the Ghost theme.
+ */
+require_once get_template_directory() . '/inc/woocommerce-custom-functions.php';
+
+/**
  * Enable WooCommerce Support for the Ghost Theme
  */
 function ghost_add_woocommerce_support()
@@ -240,15 +245,15 @@ function ghost_add_woocommerce_support()
 
   // 2. Enable the Zoom effect on the single product main image.
   // Uses the 'Photoswipe' library included with WooCommerce core.
-  add_theme_support('wc-product-gallery-zoom');
-
+  // add_theme_support('wc-product-gallery-zoom'); // Commented out
+  
   // 3. Enable the Lightbox (popup) for product gallery images.
   // Essential for mobile users who want to pinch-to-zoom on product details.
-  add_theme_support('wc-product-gallery-lightbox');
+  // add_theme_support('wc-product-gallery-lightbox'); // Commented out
 
   // 4. Enable the Slider/Carousel for products with multiple gallery images.
   // Automatically handles touch-swiping on tablets and mobile devices.
-  add_theme_support('wc-product-gallery-slider');
+  // add_theme_support('wc-product-gallery-slider');
 
   // 5. Define thumbnail cropping and dimensions.
   // This ensures your Tailwind grid doesn't look messy with uneven image heights.

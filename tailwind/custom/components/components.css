@@ -67,3 +67,96 @@
 .entry-content > .alignright {
 	@apply float-right ml-8;
 }
+
+/**
+ * Template: content-single-product.php
+ * Purpose: Styles for single product page components like the gallery, buttons, and quantity input.
+ */
+
+/*
+ * Gallery Thumbnails List
+ * Purpose: To change the layout of gallery thumbnails from a vertical stack
+ * to a horizontal row on larger screens.
+ */
+@media (min-width: 768px) {
+	.woocommerce div.product .woocommerce-product-gallery .flex-control-nav {
+		@apply flex flex-row gap-2;
+	}
+	.woocommerce div.product .woocommerce-product-gallery .flex-control-nav li {
+		@apply flex-1;
+	}
+}
+
+/*
+ * 'Add to Cart' Button Styling
+ * Purpose: To override default WooCommerce button styles with a modern look.
+ * The '.button.alt' class is used as it accurately targets WooCommerce's primary button.
+ */
+.woocommerce button.button.alt {
+	/* Ensure these styles override WooCommerce's default button styling. */
+	@apply rounded-md border-transparent bg-black px-6 py-3 font-semibold whitespace-nowrap text-white transition-colors duration-200;
+}
+
+/*
+ * 'Add to Cart' Button Hover State
+ */
+.woocommerce button.button.alt:hover {
+	@apply bg-orange-500 text-white!;
+}
+
+/*
+ * Modernized Quantity Input
+ */
+.woocommerce form.cart {
+	/* This ensures the quantity input and the 'Add to cart' button align nicely in a row. */
+	@apply flex items-center gap-4;
+}
+
+.woocommerce form.cart .quantity {
+	/* This holds our custom quantity button component. */
+	@apply m-0;
+}
+
+/*
+ * Quantity Input Wrapper (.ghost-quantity-buttons)
+ * Purpose: Styles the container for the custom quantity input.
+ * The border and rounded corners are applied via inline classes in PHP.
+ */
+.ghost-quantity-buttons {
+	/* Give the container a defined width and height to work with flexbox. */
+	@apply h-10 w-32 p-1;
+	/* Add flexbox properties to align the buttons and input horizontally. */
+	@apply flex items-center border-2 border-solid border-gray-400;
+}
+
+/*
+ * Quantity Input Field (input.qty)
+ * Purpose: Removes browser default styles and integrates the input seamlessly between the buttons.
+ */
+.ghost-quantity-buttons input.qty {
+	/* Remove default browser arrows on number inputs. */
+	-moz-appearance: textfield;
+	&::-webkit-outer-spin-button,
+	&::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+	/* Ensure no individual border, no padding, full height, and centered text.
+   * flex-grow allows the input to take available space between buttons.
+   */
+	@apply h-full flex-grow border-none p-0 text-center;
+}
+
+/*
+ * Quantity Buttons (.ghost-qty-minus, .ghost-qty-plus)
+ * Purpose: To ensure consistent styling, remove individual borders, and center the text.
+ */
+.ghost-quantity-buttons .ghost-qty-minus,
+.ghost-quantity-buttons .ghost-qty-plus {
+	/* Ensure no individual border, consistent size, and proper text centering */
+	@apply flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border-none bg-gray-400 text-lg;
+}
+
+.woocommerce-product-details__short-description {
+	@apply mb-6;
+}

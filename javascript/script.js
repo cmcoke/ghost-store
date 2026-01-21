@@ -8,3 +8,10 @@
  * For esbuild documentation, please see:
  * https://esbuild.github.io/
  */
+
+import { initializeQuantityButtons } from './custom-quantity.js';
+
+document.addEventListener('DOMContentLoaded', () => {
+	initializeQuantityButtons();
+});
+
