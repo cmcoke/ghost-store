@@ -22,7 +22,7 @@ body {
  * 'justify-center' and 'items-center' will center the content both vertically and horizontally within this area.
 */
 main.site-main {
-    @apply flex flex-col justify-center items-center min-h-screen;
+	@apply flex min-h-screen flex-col items-center justify-center;
 }
 
 /* 
@@ -33,7 +33,7 @@ main.site-main {
  * Adds a consistent gap between product items for better visual separation.
 */
 .woocommerce ul.products {
-	@apply my-5 flex flex-col md:flex-row md:flex-nowrap gap-6 max-w-fit md:justify-center; /* Changed from grid to flex row */
+	@apply my-5 flex max-w-fit flex-col gap-6 md:flex-row md:flex-nowrap md:justify-center; /* Changed from grid to flex row */
 }
 
 /* 
@@ -66,12 +66,12 @@ main.site-main {
 .woocommerce ul.products li.product,
 .woocommerce-page ul.products li.product {
 	@apply bg-white p-4 md:p-6 lg:p-8; /* Responsive padding */
-    grid-column: auto !important;    /* Ensures item uses auto column placement */
-    grid-row: auto !important;       /* Ensures item uses auto row placement */
-    align-self: auto !important;     /* Resets self-alignment within grid cell */
-    justify-self: auto !important;   /* Resets self-justification within grid cell */
-    width: auto !important;          /* Ensures width is not fixed externally */
-    height: auto !important;         /* Ensures height is not fixed externally */
+	grid-column: auto !important; /* Ensures item uses auto column placement */
+	grid-row: auto !important; /* Ensures item uses auto row placement */
+	align-self: auto !important; /* Resets self-alignment within grid cell */
+	justify-self: auto !important; /* Resets self-justification within grid cell */
+	width: auto !important; /* Ensures width is not fixed externally */
+	height: auto !important; /* Ensures height is not fixed externally */
 }
 
 /* 
@@ -91,5 +91,5 @@ main.site-main {
  * and is fully contained within its space (not cropped).
 */
 .woocommerce ul.products li.product img {
-    @apply w-full h-auto object-contain; /* Ensure image scales correctly */
+	@apply h-auto w-full object-contain; /* Ensure image scales correctly */
 }

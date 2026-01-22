@@ -14,4 +14,3 @@ import { initializeQuantityButtons } from './custom-quantity.js';
 document.addEventListener('DOMContentLoaded', () => {
 	initializeQuantityButtons();
 });
-

@@ -235,28 +235,15 @@ require get_template_directory() . '/inc/template-functions.php';
 require_once get_template_directory() . '/inc/woocommerce-custom-functions.php';
 
 /**
+ * WooCommerce element modifications.
+ */
+require_once get_template_directory() . '/inc/wc-modifications.php';
+
+/**
  * Enable WooCommerce Support for the Ghost Theme
  */
 function ghost_add_woocommerce_support()
 {
-  // 1. Declare that this theme is officially compatible with WooCommerce.
-  // This stops WooCommerce from using its 'fallback' layout wrappers.
-  add_theme_support('woocommerce');
-
-  // 2. Enable the Zoom effect on the single product main image.
-  // Uses the 'Photoswipe' library included with WooCommerce core.
-  // add_theme_support('wc-product-gallery-zoom'); // Commented out
-  
-  // 3. Enable the Lightbox (popup) for product gallery images.
-  // Essential for mobile users who want to pinch-to-zoom on product details.
-  // add_theme_support('wc-product-gallery-lightbox'); // Commented out
-
-  // 4. Enable the Slider/Carousel for products with multiple gallery images.
-  // Automatically handles touch-swiping on tablets and mobile devices.
-  // add_theme_support('wc-product-gallery-slider');
-
-  // 5. Define thumbnail cropping and dimensions.
-  // This ensures your Tailwind grid doesn't look messy with uneven image heights.
   add_theme_support('woocommerce', array(
     'thumbnail_image_width' => 450, // Sets the width for the shop 'grid' images.
     'single_image_width'    => 800, // Sets the width for the main product page image.
@@ -298,3 +285,19 @@ function ghost_remove_add_to_cart_button()
 // This hooks our custom function into the 'init' action, which runs early in the WordPress load process.
 // Using 'init' ensures this removal happens before WooCommerce starts displaying products.
 add_action('init', 'ghost_remove_add_to_cart_button');
+
+
+
+/**
+ * Enable Woocommerce MCP
+ */
+add_filter('woocommerce_features', function ($features) {
+  $features['mcp_integration'] = true;
+  return $features;
+});
+
+
+/**
+ * Woocommerce MCP requests require HTTPS by default. For local development is disabled using the filter hook below,
+ */
+add_filter('woocommerce_mcp_allow_insecure_transport', '__return_true');

@@ -75,3 +75,22 @@ remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_singl
 // Add our custom add to cart form action.
 
 add_action( 'woocommerce_single_product_summary', 'ghost_custom_add_to_cart_form', 30 );
+
+/**
+ * Enable WooCommerce product gallery features (zoom, lightbox, slider).
+ *
+ * These features enhance the product image display on single product pages.
+ * They are added via add_theme_support to ensure proper script enqueuing and functionality.
+ *
+ * @see https://woocommerce.com/document/woocommerce-3-0-developer-notes/#product-gallery-features
+ */
+function ghost_woocommerce_theme_support() {
+	// Add theme support for WooCommerce product gallery zoom.
+	add_theme_support( 'wc-product-gallery-zoom' );
+	// Add theme support for WooCommerce product gallery lightbox.
+	add_theme_support( 'wc-product-gallery-lightbox' );
+	// Add theme support for WooCommerce product gallery slider.
+	add_theme_support( 'wc-product-gallery-slider' );
+}
+// Hook into the after_setup_theme action to ensure theme support is added at the correct time.
+add_action( 'after_setup_theme', 'ghost_woocommerce_theme_support' );

@@ -11,6 +11,19 @@
         "CONTEXT7_API_KEY": "${CONTEXT7_API_KEY}",
         "Accept": "application/json, text/event-stream"
       }
+    },
+    "woocommerce_mcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@automattic/mcp-wordpress-remote@latest"
+      ],
+      "env": {
+        "NODE_TLS_REJECT_UNAUTHORIZED": "0",
+        "WP_API_URL": "https://ghost-store.local/wp-json/woocommerce/mcp",
+        "CUSTOM_HEADERS": "{\"X-MCP-API-Key\": \"${YOUR_CONSUMER_KEY}:${YOUR_CONSUMER_SECRET}\"}"
+      }
     }
   }
 }
