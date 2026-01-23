@@ -1,0 +1,133 @@
+/**
+ * Styles for:
+ * theme/woocommerce/cart/cart.php
+ */
+
+/** 
+ * This styles the centers the tables
+*/
+.woocommerce-cart .woocommerce {
+	@apply max-w-[1220px];
+}
+
+.woocommerce-cart-form {
+	/**
+	 * This applies a container style to the cart form.
+	 * - `bg-white`: Sets a white background.
+	 * - `p-6`: Adds padding around the form.
+	 * - `rounded-lg`: Applies rounded corners.
+	 * - `shadow-md`: Adds a medium box shadow for depth.
+	 */
+	@apply rounded-lg bg-white p-6 shadow-md;
+}
+
+.woocommerce-cart-form__contents {
+	/**
+	 * This ensures the table takes up the full width of its container.
+	 */
+	@apply w-full;
+}
+
+.woocommerce-cart-form__contents thead {
+	/**
+	 * This styles the table header.
+	 * - `border-b-2`: Adds a 2px bottom border.
+	 * - `border-gray-200`: Sets the border color.
+	 */
+	@apply border-b-2 border-gray-200;
+}
+
+.woocommerce-cart-form__contents th {
+	/**
+	 * This styles the header cells.
+	 * - `p-4`: Adds padding.
+	 * - `text-left`: Aligns text to the left.
+	 * - `text-sm`: Sets a small font size.
+	 * - `font-semibold`: Makes the text bold.
+	 * - `text-gray-600`: Sets the text color.
+	 * - `uppercase`: Makes the text uppercase.
+	 */
+	@apply p-4 text-left text-sm font-semibold text-gray-600 uppercase;
+}
+
+.woocommerce-cart-form__cart-item {
+	/**
+	 * This adds a bottom border to each cart item row for separation.
+	 */
+	@apply border-b border-gray-200;
+}
+
+.woocommerce-cart-form__cart-item td {
+	/**
+	 * This styles the cells within each cart item row.
+	 * - `p-4`: Adds padding.
+	 * - `align-middle`: Vertically aligns content to the middle.
+	 */
+	@apply p-4 align-middle;
+}
+
+.woocommerce-cart table.cart img {
+	/**
+	 * This styles the product thumbnail image.
+	 * - `w-24`: Sets a fixed width.
+	 * - `h-24`: Sets a fixed height.
+	 * - `object-cover`: Ensures the image covers the area without distortion.
+	 * - `rounded-md`: Applies rounded corners.
+	 */
+	@apply h-24 w-24 rounded-md object-cover;
+	/* @apply h-auto w-auto rounded-md object-cover; */
+}
+
+.product-name a {
+	/**
+	 * This styles the product name link.
+	 * - `font-semibold`: Makes the text bold.
+	 * - `text-gray-800`: Sets the text color.
+	 * - `hover:text-primary`: Changes the text color on hover to the primary theme color.
+	 */
+	@apply hover:text-primary font-semibold text-gray-800;
+}
+
+.product-remove .remove {
+	/**
+	 * This styles the 'remove from cart' button (the 'x').
+	 * - `text-red-500`: Makes the icon red.
+	 * - `hover:text-red-700`: Darkens the icon color on hover.
+	 * - `font-bold`: Makes the 'x' bold.
+	 * - `text-xl`: Increases the font size.
+	 */
+	@apply text-xl text-[1.6em]! leading-[.8]! font-bold text-red-500 hover:text-red-700;
+}
+
+.cart-collaterals .cart_totals {
+	/**
+	 * This styles the cart totals block.
+	 * - `bg-gray-50`: Sets a light gray background.
+	 * - `p-6`: Adds padding.
+	 * - `rounded-lg`: Applies rounded corners.
+	 * - `shadow-md`: Adds a medium box shadow.
+	 */
+	@apply rounded-lg bg-gray-50 p-6 shadow-md;
+}
+
+.woocommerce-cart .wc-proceed-to-checkout a.checkout-button {
+	/**
+	 * This styles the 'Proceed to Checkout' button.
+	 * - `w-full`: Makes the button take up the full width of its container.
+	 * - `text-center`: Centers the text inside the button.
+	 * - `bg-purple-600`: Sets the background to a specific purple color.
+	 * - `text-white`: Sets the text color to white.
+	 * - `font-bold`: Makes the text bold.
+	 * - `py-3`: Adds vertical padding.
+	 * - `rounded-md`: Applies rounded corners.
+	 * - `hover:bg-purple-700`: Darkens the background on hover.
+	 */
+	@apply w-full rounded-md bg-red-600 py-3 text-center font-bold text-white hover:bg-red-700!;
+}
+
+/** 
+ * This styles the 'Coupon code' input field
+*/
+.woocommerce-page table.cart td.actions .input-text {
+	@apply w-[58%];
+}

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * The Template for displaying product archives, including the main shop page which is a post type archive.
+ * The Template for displaying product archives, including the main shop page which is a post type archive
  *
  * This template can be overridden by copying it to yourtheme/woocommerce/archive-product.php.
  *
@@ -11,131 +11,106 @@
  * happen. When this occurs the version of the template file will be bumped and
  * the readme will list any important changes.
  *
- * @see https://woo.com/document/template-structure/
+ * @see https://woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates
- * @version 3.4.0
+ * @version 8.6.0
  */
 
-// Ensures that this file is not called directly, enhancing security.
-// If the WordPress constant ABSPATH is not defined, the script will stop execution.
+// Ensures the file is not accessed directly.
 defined('ABSPATH') || exit;
 
-// Includes the theme's header file. It will look for header-shop.php first,
-// and fall back to header.php if not found.
+// Retrieves the header for the shop.
 get_header('shop');
 
 /**
  * Hook: woocommerce_before_main_content.
  *
- * This is a WooCommerce action hook that allows other functions to add content
- * right before the main content area of a WooCommerce page.
- *
- * @hooked woocommerce_output_content_wrapper - 10 (outputs the opening divs for the content area)
- * @hooked woocommerce_breadcrumb - 20 (displays the breadcrumb navigation trail)
+ * @hooked woocommerce_output_content_wrapper - 10 (outputs opening divs for the content)
+ * @hooked woocommerce_breadcrumb - 20
+ * @hooked WC_Structured_Data::generate_website_data() - 30
  */
+// Executes the woocommerce_before_main_content action hook.
 do_action('woocommerce_before_main_content');
 
-?>
-<header class="woocommerce-products-header">
-  <?php
-  // This checks a filter to see if the page title should be displayed.
-  // It allows developers to disable the title from showing if needed.
-  if (apply_filters('woocommerce_show_page_title', false)) :
-  ?>
-  <h1 class="woocommerce-products-header__title page-title"><?php woocommerce_page_title(); ?></h1>
-  <?php endif; // This ends the if-statement for showing the page title. 
-  ?>
+/**
+ * Hook: woocommerce_shop_loop_header.
+ *
+ * @since 8.6.0
+ *
+ * @hooked woocommerce_product_taxonomy_archive_header - 10
+ */
+// Executes the woocommerce_shop_loop_header action hook to display the header.
+do_action('woocommerce_shop_loop_header');
 
-  <?php
-  /**
-   * Hook: woocommerce_archive_description.
-   *
-   * This action hook is used to display the description for a product category or the main shop page.
-   *
-   * @hooked woocommerce_taxonomy_archive_description - 10 (displays category/tag descriptions)
-   * @hooked woocommerce_product_archive_description - 10 (displays the main shop page description)
-   */
-  do_action('woocommerce_archive_description');
-  ?>
-</header>
-<?php
-// This function checks if there are products to display in the current view (e.g., shop, category).
+// Checks if there are products to display.
 if (woocommerce_product_loop()) {
 
   /**
    * Hook: woocommerce_before_shop_loop.
    *
-   * This action hook allows adding content before the main product loop starts.
-   *
-   * @hooked woocommerce_output_all_notices - 10 (displays any WooCommerce notices like 'Product added to cart')
-   * @hooked woocommerce_result_count - 20 (displays the 'Showing 1-12 of X results' text)
-   * @hooked woocommerce_catalog_ordering - 30 (displays the dropdown for sorting products)
+   * @hooked woocommerce_output_all_notices - 10
+   * @hooked woocommerce_result_count - 20
+   * @hooked woocommerce_catalog_ordering - 30
    */
-  // do_action('woocommerce_before_shop_loop');
+  // Intentionally commented out to match the previous template's customization.
+  // do_action( 'woocommerce_before_shop_loop' );
 
-  // This function outputs the opening HTML wrapper for the product grid (e.g., <ul class="products">).
+  // Starts the product loop with the opening markup.
   woocommerce_product_loop_start();
 
-  // This checks if there are any products in the current query to loop through.
+  // Checks if there are products in the current query.
   if (wc_get_loop_prop('total')) {
-    // This is the standard WordPress loop to iterate through posts (in this case, products).
+    // Loops through the products.
     while (have_posts()) {
-      // This sets up the current post data, making it available for use in the loop.
+      // Sets up the post data for the current product.
       the_post();
 
       /**
        * Hook: woocommerce_shop_loop.
-       *
-       * This is an action hook that is intentionally left empty by default.
-       * It allows developers to inject custom code inside the product loop item.
        */
+      // Executes the woocommerce_shop_loop action hook.
       do_action('woocommerce_shop_loop');
 
-      // This includes the template for a single product grid item (content-product.php).
+      // Loads the template part for displaying a single product.
       wc_get_template_part('content', 'product');
     }
   }
 
-  // This function outputs the closing HTML wrapper for the product grid (e.g., </ul>).
+  // Ends the product loop with the closing markup.
   woocommerce_product_loop_end();
 
   /**
    * Hook: woocommerce_after_shop_loop.
    *
-   * This action hook allows adding content after the main product loop ends.
-   *
-   * @hooked woocommerce_pagination - 10 (displays the pagination links for navigating between pages of products)
+   * @hooked woocommerce_pagination - 10
    */
+  // Executes the woocommerce_after_shop_loop action hook for pagination.
   do_action('woocommerce_after_shop_loop');
 } else {
   /**
    * Hook: woocommerce_no_products_found.
    *
-   * This action hook is triggered if no products are found for the current query.
-   *
-   * @hooked wc_no_products_found - 10 (displays a 'No products were found matching your selection.' message)
+   * @hooked wc_no_products_found - 10
    */
+  // Executes the woocommerce_no_products_found action hook if no products are found.
   do_action('woocommerce_no_products_found');
 }
 
 /**
  * Hook: woocommerce_after_main_content.
  *
- * This action hook allows adding content right after the main content area.
- *
- * @hooked woocommerce_output_content_wrapper_end - 10 (outputs the closing divs for the content area)
+ * @hooked woocommerce_output_content_wrapper_end - 10 (outputs closing divs for the content)
  */
+// Executes the woocommerce_after_main_content action hook.
 do_action('woocommerce_after_main_content');
 
 /**
  * Hook: woocommerce_sidebar.
  *
- * This action hook is used to display the WooCommerce sidebar.
- *
- * @hooked woocommerce_get_sidebar - 10 (includes the sidebar.php template)
+ * @hooked woocommerce_get_sidebar - 10
  */
+// Intentionally commented out to match the previous template's customization.
 // do_action( 'woocommerce_sidebar' );
 
-// Includes the theme's footer file. It will look for footer-shop.php first,
-// and fall back to footer.php if not found.
+// Retrieves the footer for the shop.
 get_footer('shop');

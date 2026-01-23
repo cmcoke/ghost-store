@@ -55,7 +55,7 @@ if (! function_exists('ghost_setup')) :
   {
     /*
 		 * Make theme available for translation.
-		 * Translations can be filed in the /languages/ directory.
+		 * Translations can be filed in the /languages/directory.
 		 * If you're building a theme based on ghost, use a find and replace
 		 * to change 'ghost' to the name of your theme in all the template files.
 		 */
@@ -212,7 +212,7 @@ function ghost_modify_heading_levels($args, $block_type)
     return $args;
   }
 
-  // Remove <h1>, <h5> and <h6>.
+  // Remove <h1>, 5 and <h6>.
   $args['attributes']['levelOptions']['default'] = array(2, 3, 4);
 
   return $args;
@@ -220,19 +220,29 @@ function ghost_modify_heading_levels($args, $block_type)
 add_filter('register_block_type_args', 'ghost_modify_heading_levels', 10, 2);
 
 /**
- * Custom template tags for this theme.
- */
-require get_template_directory() . '/inc/template-tags.php';
-
-/**
  * Functions which enhance the theme by hooking into WordPress.
  */
 require get_template_directory() . '/inc/template-functions.php';
 
 /**
- * Custom WooCommerce functions for the Ghost theme.
+ * Custom template tags for this theme.
  */
-require_once get_template_directory() . '/inc/woocommerce-custom-functions.php';
+require get_template_directory() . '/inc/template-tags.php';
+
+/**
+ * Include custom WooCommerce functions safely.
+ *
+ * We hook this into 'after_setup_theme' to ensure it loads after the main theme
+ * and any core functionalities are set up. Priority 11 ensures it runs after
+ * WooCommerce support is declared (which is usually at priority 10).
+ */
+function ghost_include_wc_custom_functions() {
+	$file_path = get_template_directory() . '/inc/woocommerce-custom-functions.php';
+	// Restore the require_once to execute the file.
+	require_once $file_path;
+}
+add_action( 'after_setup_theme', 'ghost_include_wc_custom_functions', 11 );
+
 
 /**
  * WooCommerce element modifications.

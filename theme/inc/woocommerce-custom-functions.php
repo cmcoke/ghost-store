@@ -1,96 +1,93 @@
 <?php
-
 /**
  * WooCommerce Custom Functions
  *
- * This file contains custom functions and filters to extend or modify
- * WooCommerce functionality within the Ghost theme.
+ * This file contains custom functions for modifying WooCommerce behavior and layout
+ * through hooks and filters. It helps to keep customizations organized and separate
+ * from the main functions.php file.
+ *
+ * @package Ghost
+ * @see     https://woocommerce.com/document/introduction-to-hooks-actions-and-filters/
  */
 
-if (! defined('ABSPATH')) {
-  exit; // Exit if accessed directly
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
- * Custom Add to Cart form for simple products.
- * This replaces WooCommerce's default output for the quantity and add to cart button.
+ * 1. Open the main flex container for the cart page.
+ *
+ * This function is hooked into 'woocommerce_before_cart'.
+ * It injects an opening <div> that will act as a flex container for the
+ * entire cart contents, allowing for a two-column layout.
+ *
+ * @return void
  */
-function ghost_custom_add_to_cart_form()
-{
-  global $product;
-
-  // This function only applies to simple products. For other types, we fall back to the default.
-  if ($product && $product->is_type('simple') && $product->is_purchasable() && $product->is_in_stock()) {
-
-    // Get quantity arguments for the input field.
-    $min_value = apply_filters('woocommerce_quantity_input_min', $product->get_min_purchase_quantity(), $product);
-    $max_value = apply_filters('woocommerce_quantity_input_max', $product->get_max_purchase_quantity(), $product);
-    $step      = apply_filters('woocommerce_quantity_input_step', 1, $product);
-    $input_value = apply_filters('woocommerce_quantity_input_initial_value', $product->get_min_purchase_quantity(), $product);
-
-    $input_id = 'quantity_' . mt_rand(1000, 9999); // Ensure a unique ID for the input.
-
-    // Output our custom form for simple products.
-?>
-<form class="cart"
-  action="<?php echo esc_url(apply_filters('woocommerce_add_to_cart_form_action', $product->get_permalink(), $product)); ?>"
-  method="post" enctype="multipart/form-data">
-
-  <?php do_action('woocommerce_before_add_to_cart_button'); ?>
-
-  <div class="ghost-quantity-buttons-wrapper">
-    <label class="screen-reader-text"
-      for="<?php echo esc_attr($input_id); ?>"><?php echo esc_html__('Quantity', 'woocommerce'); ?></label>
-    <div class="ghost-quantity-buttons" data-min="<?php echo esc_attr($min_value); ?>"
-      data-max="<?php echo esc_attr($max_value); ?>" data-step="<?php echo esc_attr($step); ?>">
-      <button type="button" class="ghost-qty-minus">-</button>
-      <input type="number" id="<?php echo esc_attr($input_id); ?>" class="input-text qty text"
-        step="<?php echo esc_attr($step); ?>" min="<?php echo esc_attr($min_value); ?>"
-        <?php if ($max_value > 0) : ?>max="<?php echo esc_attr($max_value); ?>" <?php endif; ?> name="quantity"
-        value="<?php echo esc_attr($input_value); ?>"
-        title="<?php echo esc_attr_x('Qty', 'Product quantity input tooltip', 'woocommerce'); ?>" size="4"
-        placeholder="" inputmode="numeric" autocomplete="off" />
-      <button type="button" class="ghost-qty-plus">+</button>
-    </div>
-  </div>
-
-  <button type="submit" name="add-to-cart" value="<?php echo esc_attr($product->get_id()); ?>"
-    class="single_add_to_cart_button button alt">
-    <?php echo esc_html($product->single_add_to_cart_text()); ?>
-  </button>
-
-  <?php do_action('woocommerce_after_add_to_cart_button'); ?>
-</form>
-<?php
-  } else {
-    // For other product types (variable, grouped, external), we fall back to WooCommerce's default.
-    woocommerce_template_single_add_to_cart();
-  }
+function ghost_wrap_cart_flex_open() {
+	// This div creates a responsive flexbox container.
+	// - `flex`: Activates flexbox layout.
+	// - `flex-col`: Stacks items vertically on mobile.
+	// - `lg:flex-row`: Switches to a horizontal layout on large screens.
+	// - `gap-8`: Adds spacing between the flex items (cart table and totals).
+	echo '<div class="ghost-cart-wrapper flex flex-col lg:flex-row gap-8">';
+	// This div is the first column, containing the main cart table.
+	// - `w-full`: Takes up full width on mobile.
+	// - `lg:w-2/3`: Takes up two-thirds of the width on large screens.
+	echo '<div class="ghost-cart-form-wrapper w-full lg:w-3/4">';
 }
+add_action( 'woocommerce_before_cart', 'ghost_wrap_cart_flex_open', 5 );
 
-// Remove WooCommerce's default add to cart form action.
-
-remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_add_to_cart', 30 );
-
-// Add our custom add to cart form action.
-
-add_action( 'woocommerce_single_product_summary', 'ghost_custom_add_to_cart_form', 30 );
 
 /**
- * Enable WooCommerce product gallery features (zoom, lightbox, slider).
+ * 2. Open the wrapper for the cart collaterals (totals).
  *
- * These features enhance the product image display on single product pages.
- * They are added via add_theme_support to ensure proper script enqueuing and functionality.
+ * This function is hooked into 'woocommerce_after_cart_table'.
+ * It closes the first column and opens the second column for the cart totals.
  *
- * @see https://woocommerce.com/document/woocommerce-3-0-developer-notes/#product-gallery-features
+ * @return void
  */
-function ghost_woocommerce_theme_support() {
-	// Add theme support for WooCommerce product gallery zoom.
-	add_theme_support( 'wc-product-gallery-zoom' );
-	// Add theme support for WooCommerce product gallery lightbox.
-	add_theme_support( 'wc-product-gallery-lightbox' );
-	// Add theme support for WooCommerce product gallery slider.
-	add_theme_support( 'wc-product-gallery-slider' );
+function ghost_wrap_cart_collaterals_open() {
+	// Closes the div for the cart table wrapper.
+	echo '</div>';
+	// This div is the second column, which will contain the cart totals.
+	// - `w-full`: Takes up full width on mobile.
+	// - `lg:w-1/3`: Takes up one-third of the width on large screens.
+	echo '<div class="ghost-cart-collaterals-wrapper w-full lg:w-1/4">';
 }
-// Hook into the after_setup_theme action to ensure theme support is added at the correct time.
-add_action( 'after_setup_theme', 'ghost_woocommerce_theme_support' );
+add_action( 'woocommerce_after_cart_table', 'ghost_wrap_cart_collaterals_open', 5 );
+
+
+/**
+ * 3. Reposition the cart totals.
+ *
+ * This function unhooks the cart totals from their default location and
+ * re-hooks them inside our new second column.
+ *
+ * @return void
+ */
+function ghost_reposition_cart_totals() {
+	// Removes the entire 'cart-collaterals' section, which includes totals and cross-sells.
+	remove_action( 'woocommerce_cart_collaterals', 'woocommerce_cart_totals', 10 );
+
+	// Re-adds the cart totals to a new hook that we can place anywhere.
+	// We will trigger this hook inside our new column.
+	add_action( 'ghost_cart_collaterals', 'woocommerce_cart_totals', 10 );
+}
+add_action( 'init', 'ghost_reposition_cart_totals' );
+
+
+/**
+ * 4. Close the wrapper divs.
+ *
+ * This function is hooked into 'woocommerce_after_cart'.
+ * It closes the remaining open divs from our custom layout structure.
+ *
+ * @return void
+ */
+function ghost_wrap_cart_close() {
+	// This is where we trigger our custom hook to display the cart totals.
+	do_action( 'ghost_cart_collaterals' );
+	// Closes the div for the cart collaterals wrapper.
+	echo '</div>';
+	// Closes the main flexbox container.
+	echo '</div>';
+}
+add_action( 'woocommerce_after_cart', 'ghost_wrap_cart_close', 20 );

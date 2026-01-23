@@ -19,6 +19,18 @@ if (! defined('WPINC')) {
 }
 
 /**
+ * Hide the main shop page title.
+ *
+ * The woocommerce_show_page_title filter is used to control the display of the
+ * page title on WooCommerce archive pages. Returning false from this filter
+ * effectively hides the title, which was the behavior in the previous version
+ * of the archive-product.php template.
+ *
+ * @return bool Always returns false to hide the title.
+ */
+add_filter('woocommerce_show_page_title', '__return_false');
+
+/**
  * Moves the product price to appear before the product title on the single product page.
  *
  * This function is hooked into 'woocommerce_single_product_summary'. It first removes the
@@ -158,18 +170,20 @@ add_filter('woocommerce_get_price_html', 'ghost_add_exclusive_badge_to_price', 1
  *
  * @return void
  */
-function ghost_render_header_cart_count() {
-	?>
-	<a href="<?php echo esc_url( wc_get_cart_url() ); ?>" class="ghost-header-cart-link uppercase font-[teko] text-[1.5rem] md:text-2xl cursor-pointer">
-		<?php
-		/* translators: %d: number of items in the cart */
-		printf(
-			esc_html__( 'cart [%d]', 'ghost' ),
-			(int) WC()->cart->get_cart_contents_count()
-		);
-		?>
-	</a>
-	<?php
+function ghost_render_header_cart_count()
+{
+?>
+<a href="<?php echo esc_url(wc_get_cart_url()); ?>"
+  class="ghost-header-cart-link uppercase font-[teko] text-[1.5rem] md:text-2xl cursor-pointer">
+  <?php
+    /* translators: %d: number of items in the cart */
+    printf(
+      esc_html__('cart [%d]', 'ghost'),
+      (int) WC()->cart->get_cart_contents_count()
+    );
+    ?>
+</a>
+<?php
 }
 
 /**
@@ -182,23 +196,24 @@ function ghost_render_header_cart_count() {
  * @param array $fragments The array of existing WooCommerce AJAX fragments.
  * @return array The modified array of fragments including our header cart count.
  */
-function ghost_add_cart_count_fragment( $fragments ) {
-	// Start output buffering to capture the HTML from our rendering function.
-	ob_start();
+function ghost_add_cart_count_fragment($fragments)
+{
+  // Start output buffering to capture the HTML from our rendering function.
+  ob_start();
 
-	// Call the function that renders our cart link.
-	ghost_render_header_cart_count();
+  // Call the function that renders our cart link.
+  ghost_render_header_cart_count();
 
-	// Get the captured HTML and add it to the fragments array.
-	// The key 'a.ghost-header-cart-link' is the CSS selector for the element to be replaced.
-	// The value is the new HTML that will replace it.
-	$fragments['a.ghost-header-cart-link'] = ob_get_clean();
+  // Get the captured HTML and add it to the fragments array.
+  // The key 'a.ghost-header-cart-link' is the CSS selector for the element to be replaced.
+  // The value is the new HTML that will replace it.
+  $fragments['a.ghost-header-cart-link'] = ob_get_clean();
 
-	// Return the updated fragments array to WooCommerce.
-	return $fragments;
+  // Return the updated fragments array to WooCommerce.
+  return $fragments;
 }
 // Apply the filter to add our fragment.
-add_filter( 'woocommerce_add_to_cart_fragments', 'ghost_add_cart_count_fragment', 10, 1 );
+add_filter('woocommerce_add_to_cart_fragments', 'ghost_add_cart_count_fragment', 10, 1);
 
 /**
  * Enqueues necessary WordPress Interactivity API and WooCommerce Blocks JavaScripts
@@ -210,44 +225,45 @@ add_filter( 'woocommerce_add_to_cart_fragments', 'ghost_add_cart_count_fragment'
  *
  * @return void
  */
-function ghost_enqueue_interactivity_scripts() {
-	// Check if we are on a single product page.
-	if ( is_product() ) {
-		// Ensure jQuery is loaded as many WooCommerce scripts depend on it.
-		wp_enqueue_script( 'jquery' );
+function ghost_enqueue_interactivity_scripts()
+{
+  // Check if we are on a single product page.
+  if (is_product()) {
+    // Ensure jQuery is loaded as many WooCommerce scripts depend on it.
+    wp_enqueue_script('jquery');
 
-		// Enqueue core WooCommerce scripts related to add-to-cart functionality.
-		// These are crucial for intercepting form submissions and making AJAX calls.
-		wp_enqueue_script( 'wc-add-to-cart', plugins_url( WC_PLUGIN_FILE ) . '/assets/js/frontend/add-to-cart.min.js', array( 'jquery' ), WC_VERSION, true );
-		wp_enqueue_script( 'wc-single-product', plugins_url( WC_PLUGIN_FILE ) . '/assets/js/frontend/single-product.min.js', array( 'jquery', 'wc-add-to-cart' ), WC_VERSION, true );
-		wp_enqueue_script( 'wc-cart-fragments', plugins_url( WC_PLUGIN_FILE ) . '/assets/js/frontend/cart-fragments.min.js', array( 'jquery', 'wc-add-to-cart' ), WC_VERSION, true );
+    // Enqueue core WooCommerce scripts related to add-to-cart functionality.
+    // These are crucial for intercepting form submissions and making AJAX calls.
+    wp_enqueue_script('wc-add-to-cart', plugins_url(WC_PLUGIN_FILE) . '/assets/js/frontend/add-to-cart.min.js', array('jquery'), WC_VERSION, true);
+    wp_enqueue_script('wc-single-product', plugins_url(WC_PLUGIN_FILE) . '/assets/js/frontend/single-product.min.js', array('jquery', 'wc-add-to-cart'), WC_VERSION, true);
+    wp_enqueue_script('wc-cart-fragments', plugins_url(WC_PLUGIN_FILE) . '/assets/js/frontend/cart-fragments.min.js', array('jquery', 'wc-add-to-cart'), WC_VERSION, true);
 
-		// Enqueue the core WordPress Interactivity API script.
-		// This script is essential for data-wp-interactive and data-wp-on--click attributes
-		// used in the modern simple.php template.
-		wp_enqueue_script( 'wp-interactivity' );
+    // Enqueue the core WordPress Interactivity API script.
+    // This script is essential for data-wp-interactive and data-wp-on--click attributes
+    // used in the modern simple.php template.
+    wp_enqueue_script('wp-interactivity');
 
-		// Enqueue WooCommerce Blocks data and registry scripts.
-		// These provide the context and actions for the product button block functionality
-		// that the new simple.php template leverages. They depend on wp-interactivity.
-		wp_enqueue_script( 'wc-blocks-data', plugins_url( 'woocommerce-blocks/build/wc-blocks-data.js', WC_PLUGIN_FILE ), array( 'wp-interactivity', 'wp-api-fetch' ), '9.9.9', true ); // Using a generic version
-		wp_enqueue_script( 'wc-blocks-registry', plugins_url( 'woocommerce-blocks/build/wc-blocks-registry.js', WC_PLUGIN_FILE ), array( 'wp-interactivity', 'wc-blocks-data' ), '9.9.9', true ); // Using a generic version
+    // Enqueue WooCommerce Blocks data and registry scripts.
+    // These provide the context and actions for the product button block functionality
+    // that the new simple.php template leverages. They depend on wp-interactivity.
+    wp_enqueue_script('wc-blocks-data', plugins_url('woocommerce-blocks/build/wc-blocks-data.js', WC_PLUGIN_FILE), array('wp-interactivity', 'wp-api-fetch'), '9.9.9', true); // Using a generic version
+    wp_enqueue_script('wc-blocks-registry', plugins_url('woocommerce-blocks/build/wc-blocks-registry.js', WC_PLUGIN_FILE), array('wp-interactivity', 'wc-blocks-data'), '9.9.9', true); // Using a generic version
 
-		// Localize the script for wc-add-to-cart, as it needs specific parameters.
-		// This is usually done by WooCommerce itself, but re-doing it here ensures it's available.
-		wp_localize_script( 'wc-add-to-cart', 'wc_add_to_cart_params', array(
-			'ajax_url'                => admin_url( 'admin-ajax.php' ),
-			'wc_ajax_url'             => WC_AJAX::get_endpoint( '%%endpoint%%' ),
-			'i18n_view_cart'          => esc_attr__( 'View cart', 'woocommerce' ),
-			'cart_url'                => esc_url( wc_get_cart_url() ),
-			'is_cart'                 => is_cart(),
-			'cart_redirect_after_add' => get_option( 'woocommerce_cart_redirect_after_add' ),
-		) );
-	}
+    // Localize the script for wc-add-to-cart, as it needs specific parameters.
+    // This is usually done by WooCommerce itself, but re-doing it here ensures it's available.
+    wp_localize_script('wc-add-to-cart', 'wc_add_to_cart_params', array(
+      'ajax_url'                => admin_url('admin-ajax.php'),
+      'wc_ajax_url'             => WC_AJAX::get_endpoint('%%endpoint%%'),
+      'i18n_view_cart'          => esc_attr__('View cart', 'woocommerce'),
+      'cart_url'                => esc_url(wc_get_cart_url()),
+      'is_cart'                 => is_cart(),
+      'cart_redirect_after_add' => get_option('woocommerce_cart_redirect_after_add'),
+    ));
+  }
 }
 // Hook this function into 'wp_enqueue_scripts' to ensure scripts are added correctly.
 // Use a high priority to try and override any potential theme dequeueing or improper loading.
-add_action( 'wp_enqueue_scripts', 'ghost_enqueue_interactivity_scripts', 999 );
+add_action('wp_enqueue_scripts', 'ghost_enqueue_interactivity_scripts', 999);
 
 /**
  * Custom JavaScript to manually handle AJAX add-to-cart on single product pages.
@@ -260,80 +276,81 @@ add_action( 'wp_enqueue_scripts', 'ghost_enqueue_interactivity_scripts', 999 );
  *
  * @return void
  */
-function ghost_custom_add_to_cart_ajax_script() {
-	// Only load this script on single product pages.
-	if ( ! is_product() ) {
-		return;
-	}
-	?>
-	<script type="text/javascript">
-		// Ensure jQuery is available and the DOM is ready.
-		jQuery(function($) {
-			const addToCartButton = $('button.single_add_to_cart_button');
-			const cartForm = addToCartButton.closest('form.cart');
+function ghost_custom_add_to_cart_ajax_script()
+{
+  // Only load this script on single product pages.
+  if (! is_product()) {
+    return;
+  }
+?>
+<script type="text/javascript">
+// Ensure jQuery is available and the DOM is ready.
+jQuery(function($) {
+  const addToCartButton = $('button.single_add_to_cart_button');
+  const cartForm = addToCartButton.closest('form.cart');
 
-			// Check if the button and form exist.
-			if (addToCartButton.length && cartForm.length) {
-				// Prevent the default form submission behavior.
-				cartForm.on('submit', function(e) {
-					e.preventDefault();
+  // Check if the button and form exist.
+  if (addToCartButton.length && cartForm.length) {
+    // Prevent the default form submission behavior.
+    cartForm.on('submit', function(e) {
+      e.preventDefault();
 
-					const button = $(this).find('button.single_add_to_cart_button');
-					const productId = button.val();
-					const quantity = $(this).find('input.qty').val();
+      const button = $(this).find('button.single_add_to_cart_button');
+      const productId = button.val();
+      const quantity = $(this).find('input.qty').val();
 
-					// Add loading class to the button
-					button.addClass('loading');
+      // Add loading class to the button
+      button.addClass('loading');
 
-					// Ensure wc_add_to_cart_params is defined, as it holds the AJAX URL.
-					if (typeof wc_add_to_cart_params === 'undefined') {
-						console.error('wc_add_to_cart_params is undefined. Cannot perform AJAX add to cart.');
-						button.removeClass('loading');
-						return;
-					}
+      // Ensure wc_add_to_cart_params is defined, as it holds the AJAX URL.
+      if (typeof wc_add_to_cart_params === 'undefined') {
+        console.error('wc_add_to_cart_params is undefined. Cannot perform AJAX add to cart.');
+        button.removeClass('loading');
+        return;
+      }
 
-					// Construct the data for the AJAX request.
-					const data = {
-						product_id: productId,
-						quantity: quantity
-					};
+      // Construct the data for the AJAX request.
+      const data = {
+        product_id: productId,
+        quantity: quantity
+      };
 
-					// Perform the AJAX request.
-					$.ajax({
-						type: 'POST',
-						// Use the modern wc_ajax_url endpoint, replacing the placeholder with 'add_to_cart'.
-						url: wc_add_to_cart_params.wc_ajax_url.replace('%%endpoint%%', 'add_to_cart'),
-						data: data,
-						success: function(response) {
-							if (response.error && response.product_url) {
-								// If an error and product_url is present, redirect.
-								window.location = response.product_url;
-								return;
-							}
-							if (response.fragments) {
-								// Trigger the 'added_to_cart' event. This is crucial!
-								// WooCommerce's cart-fragments.js listens for this event
-								// and updates all registered fragments (like our header cart).
-								$(document.body).trigger('added_to_cart', [response.fragments, response.cart_hash, button]);
-							}
+      // Perform the AJAX request.
+      $.ajax({
+        type: 'POST',
+        // Use the modern wc_ajax_url endpoint, replacing the placeholder with 'add_to_cart'.
+        url: wc_add_to_cart_params.wc_ajax_url.replace('%%endpoint%%', 'add_to_cart'),
+        data: data,
+        success: function(response) {
+          if (response.error && response.product_url) {
+            // If an error and product_url is present, redirect.
+            window.location = response.product_url;
+            return;
+          }
+          if (response.fragments) {
+            // Trigger the 'added_to_cart' event. This is crucial!
+            // WooCommerce's cart-fragments.js listens for this event
+            // and updates all registered fragments (like our header cart).
+            $(document.body).trigger('added_to_cart', [response.fragments, response.cart_hash, button]);
+          }
 
-							// Remove loading class.
-							button.removeClass('loading');
-						},
-						error: function(jqXHR, textStatus, errorThrown) {
-							console.error('AJAX error:', textStatus, errorThrown);
-							button.removeClass('loading');
-							// Fallback to normal submission or show an error message.
-							// For now, we'll let it refresh on error if the above fails completely.
-							cartForm.off('submit').submit();
-						},
-						dataType: 'json'
-					});
-				});
-			}
-		});
-	</script>
-	<?php
+          // Remove loading class.
+          button.removeClass('loading');
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          console.error('AJAX error:', textStatus, errorThrown);
+          button.removeClass('loading');
+          // Fallback to normal submission or show an error message.
+          // For now, we'll let it refresh on error if the above fails completely.
+          cartForm.off('submit').submit();
+        },
+        dataType: 'json'
+      });
+    });
+  }
+});
+</script>
+<?php
 }
 // Hook this custom JavaScript into the footer.
-add_action( 'wp_footer', 'ghost_custom_add_to_cart_ajax_script', 999 );
+add_action('wp_footer', 'ghost_custom_add_to_cart_ajax_script', 999);
