@@ -250,6 +250,11 @@ add_action( 'after_setup_theme', 'ghost_include_wc_custom_functions', 11 );
 require_once get_template_directory() . '/inc/wc-modifications.php';
 
 /**
+ * WooCommerce checkout modifications.
+ */
+require_once get_template_directory() . '/inc/wc-checkout-mods.php';
+
+/**
  * Enable WooCommerce Support for the Ghost Theme
  */
 function ghost_add_woocommerce_support()
